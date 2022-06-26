@@ -4,4 +4,4 @@ project(TextEditor)
 
 include_directories(${PROJECT_SOURCE_DIR}/headers)
 
-add_executable(${PROJECT_NAME} editor.c utils.c)
+add_executable(${PROJECT_NAME} editor.c terminal.c)
