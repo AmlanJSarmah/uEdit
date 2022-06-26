@@ -2,4 +2,6 @@ cmake_minimum_required(VERSION 3.0)
 
 project(TextEditor)
 
-add_executable(${PROJECT_NAME} editor.c)
+include_directories(${PROJECT_SOURCE_DIR}/headers)
+
+add_executable(${PROJECT_NAME} editor.c utils.c)
