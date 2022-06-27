@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <errno.h>
 
+// macro definations
+#define CTRL_KEY(k) ((k) & 0x1f)
+
+//original terminal configuation
 struct termios original_terminal_config;
 
 int main()
@@ -24,7 +28,7 @@ int main()
     {
       printf("%d ('%c')\n\r", c, c);
     }
-    if(c=='q') break;
+    if(c==CTRL_KEY('q')) break;
   }
   disable_raw_mode(&original_terminal_config); //comes from terminal.h it disables the raw mode upon exit
   return 0;
