@@ -17,6 +17,10 @@ void enable_raw_mode(struct termios *original_terminal_config)
     struct termios raw_config = *original_terminal_config;
     raw_config.c_lflag &= ~(ECHO); //turns off ECHO by editing the bitflag ECHO causes each keypress to be displayed.
     raw_config.c_lflag &= ~(ICANON); //turns off ICANON . Now we read data byte by byte rather then pressing ENTER for every line
+    raw_config.c_lflag &= ~(ISIG); //sends a SIFINT signal to disable the Ctrl + C behaviour
+    raw_config.c_lflag &= ~(IEXTEN); // Disable the behaviour of Ctrl + V
+    raw_config.c_iflag &= ~(IXON); // pauses Ctrl + S and Ctrl + Q pause and resume behaviour 
+    raw_config.c_oflag &= ~(OPOST); // when printing a new line we get \n\r here \r is responsible to move the cursor to end of line we don't want this as we want our code to be indented
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_config);
 }
 

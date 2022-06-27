@@ -14,11 +14,11 @@ int main()
   {
     if (iscntrl(c))
     {
-      printf("%d\n", c);
+      printf("%d\n\r", c);
     } 
     else 
     {
-      printf("%d ('%c')\n", c, c);
+      printf("%d ('%c')\n\r", c, c);
     }
   }
   disable_raw_mode(&original_terminal_config); //comes from terminal.h it disables the raw mode upon exit
