@@ -1,0 +1,1 @@
+void emergency_exit(const char *error);
