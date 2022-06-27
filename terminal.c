@@ -21,6 +21,8 @@ void enable_raw_mode(struct termios *original_terminal_config)
     raw_config.c_lflag &= ~(IEXTEN); // Disable the behaviour of Ctrl + V
     raw_config.c_iflag &= ~(IXON); // pauses Ctrl + S and Ctrl + Q pause and resume behaviour 
     raw_config.c_oflag &= ~(OPOST); // when printing a new line we get \n\r here \r is responsible to move the cursor to end of line we don't want this as we want our code to be indented
+    raw_config.c_cc[VMIN] = 0; //specifies the minimum amount of chracter require before input
+    raw_config.c_cc[VTIME] = 1; //specifies maximum amount of time before reading here we set it to 100 milisecond
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_config);
 }
 
