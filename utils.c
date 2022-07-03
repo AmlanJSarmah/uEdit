@@ -37,7 +37,8 @@ void draw_rows(int no_of_rows)
     int index;
     for(index = 0;index<no_of_rows;index++)
     {
-        write(STDOUT_FILENO,"~\r\n",3);
+        write(STDOUT_FILENO,"~",1);
+        if(index < no_of_rows - 1) write(STDOUT_FILENO,"\r\n",2);
     }
     write(STDOUT_FILENO,"\x1b[H",3);
 }
