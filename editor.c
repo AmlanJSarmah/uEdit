@@ -46,6 +46,7 @@ int main()
   for(;;)
   {
     clear_screen();
+    draw_rows();
     detect_keypress();
   }
   return 0;

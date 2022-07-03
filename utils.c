@@ -30,3 +30,14 @@ void clear_screen()
     //other two bytes are [H. It reposition cursor
     write(STDOUT_FILENO,"\x1b[H",3);
 }
+
+void draw_rows()
+{
+    int no_of_rows = 24;
+    int index;
+    for(index = 0;index<no_of_rows;index++)
+    {
+        write(STDOUT_FILENO,"~\r\n",3);
+    }
+    write(STDOUT_FILENO,"\x1b[H",3);
+}
