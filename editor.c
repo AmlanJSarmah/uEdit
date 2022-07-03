@@ -44,6 +44,7 @@ int main()
   //the loop always keeps on running looking for input 
   for(;;)
   {
+    clear_screen();
     detect_keypress();
   }
   return 0;
