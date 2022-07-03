@@ -33,6 +33,7 @@ void detect_keypress() {
   switch (c) {
     case CTRL_KEY('q'):
       disable_raw_mode(&original_terminal_config);
+      clear_screen();
       exit(0);
       break;
   }

@@ -14,6 +14,7 @@
 
 void emergency_exit(const char *error)
 {
+    clear_screen();
     perror(error);
     exit(1);
 }
