@@ -13,23 +13,38 @@
 //original terminal configuation
 struct termios original_terminal_config;
 
+//gets the key that's pressed
+char get_pressed_key()
+{
+  int no_of_byte_read;
+  char c;
+  while((no_of_byte_read = read(STDIN_FILENO, &c, 1)) != 1)
+    if(no_of_byte_read == -1 && errno != EAGAIN) //in Cygwin when read times out rather then 0 , -1 is returned with EAGIN error so in order to make the editor compatable with Cygwin we ignroe this case.
+    {
+      disable_raw_mode(&original_terminal_config);
+      emergency_exit("read");
+    }
+  return c;
+}
+
+//process key
+void detect_keypress() {
+  char c = get_pressed_key();
+  switch (c) {
+    case CTRL_KEY('q'):
+      disable_raw_mode(&original_terminal_config);
+      exit(0);
+      break;
+  }
+}
+
 int main()
 {
-  char c='\0';
   enable_raw_mode(&original_terminal_config); //comes from terminal.h it enables the raw mode in terminal
-  while(1)
+  //the loop always keeps on running looking for input 
+  for(;;)
   {
-    if(read(STDIN_FILENO,&c,1) == -1 && errno != EAGAIN) emergency_exit("read"); //in Cygwin when read times out rather then 0 , -1 is returned with EAGIN error so in order to make the editor compatable with Cygwin we ignroe this case.
-    if (iscntrl(c))
-    {
-      printf("%d\n\r", c);
-    } 
-    else 
-    {
-      printf("%d ('%c')\n\r", c, c);
-    }
-    if(c==CTRL_KEY('q')) break;
+    detect_keypress();
   }
-  disable_raw_mode(&original_terminal_config); //comes from terminal.h it disables the raw mode upon exit
   return 0;
 }
