@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 // Note on Escape sequence character:
 // It always begin with \x1b which is equivalent to 27. It instruct the terminal to do various text formatting tasks, such as coloring text, moving the cursor around, and clearing parts of the screen.
@@ -31,13 +32,24 @@ void clear_screen()
     write(STDOUT_FILENO,"\x1b[H",3);
 }
 
-void draw_rows()
+void draw_rows(int no_of_rows)
 {
-    int no_of_rows = 24;
     int index;
     for(index = 0;index<no_of_rows;index++)
     {
         write(STDOUT_FILENO,"~\r\n",3);
     }
     write(STDOUT_FILENO,"\x1b[H",3);
+}
+
+int get_window_size(int *no_of_rows, int *no_of_columns)
+{
+    struct winsize window_size;
+    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &window_size) == -1 || window_size.ws_col == 0) return -1;
+    else
+    {
+        *no_of_columns = window_size.ws_col;
+        *no_of_rows = window_size.ws_row;
+        return 0;
+    } 
 }

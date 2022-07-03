@@ -6,12 +6,22 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/ioctl.h>
 
 // macro definations
 #define CTRL_KEY(k) ((k) & 0x1f)
 
 //original terminal configuation
 struct termios original_terminal_config;
+
+//editor configurations
+struct editor_config
+{
+  int no_of_rows;
+  int no_of_columns;
+};
+
+struct editor_config editor;
 
 //gets the key that's pressed
 char get_pressed_key()
@@ -39,14 +49,21 @@ void detect_keypress() {
   }
 }
 
+// initial editor config
+void init_editor()
+{
+  if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
+}
+
 int main()
 {
   enable_raw_mode(&original_terminal_config); //comes from terminal.h it enables the raw mode in terminal
+  init_editor();
   //the loop always keeps on running looking for input 
   for(;;)
   {
     clear_screen();
-    draw_rows();
+    draw_rows(editor.no_of_rows);
     detect_keypress();
   }
   return 0;
