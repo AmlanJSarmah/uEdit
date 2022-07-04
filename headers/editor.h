@@ -1,0 +1,1 @@
+void editor_main();

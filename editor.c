@@ -7,9 +7,20 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+#include <string.h>
+#include <editor.h>
 
 // macro definations
 #define CTRL_KEY(k) ((k) & 0x1f)
+#define WRITE_BUF {NULL,0}
+
+//Write Buffer
+// The buffe allow us to a single read() call to avoid unncessary flickering loading and stuff
+struct write_buf
+{
+  char *str;
+  int length;
+};
 
 //original terminal configuation
 struct termios original_terminal_config;
@@ -22,6 +33,12 @@ struct editor_config
 };
 
 struct editor_config editor;
+
+// initial editor config
+void init_editor()
+{
+  if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
+}
 
 //gets the key that's pressed
 char get_pressed_key()
@@ -49,13 +66,7 @@ void detect_keypress() {
   }
 }
 
-// initial editor config
-void init_editor()
-{
-  if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
-}
-
-int main()
+void editor_main()
 {
   enable_raw_mode(&original_terminal_config); //comes from terminal.h it enables the raw mode in terminal
   init_editor();
@@ -66,5 +77,4 @@ int main()
     draw_rows(editor.no_of_rows);
     detect_keypress();
   }
-  return 0;
 }
