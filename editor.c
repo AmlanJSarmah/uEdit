@@ -12,15 +12,6 @@
 
 // macro definations
 #define CTRL_KEY(k) ((k) & 0x1f)
-#define WRITE_BUF {NULL,0}
-
-//Write Buffer
-// The buffe allow us to a single read() call to avoid unncessary flickering loading and stuff
-struct write_buf
-{
-  char *str;
-  int length;
-};
 
 //original terminal configuation
 struct termios original_terminal_config;
