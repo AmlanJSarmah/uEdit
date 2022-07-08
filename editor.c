@@ -64,8 +64,10 @@ void editor_main()
   //the loop always keeps on running looking for input 
   for(;;)
   {
+    write(STDOUT_FILENO,"\x1b[?25l",6); //clears cursor before repaint
     clear_screen();
-    draw_rows(editor.no_of_rows);
+    draw_rows(editor.no_of_rows,editor.no_of_columns);
+    write(STDOUT_FILENO,"\x1b[?25h",6); //display the cursor
     detect_keypress();
   }
 }

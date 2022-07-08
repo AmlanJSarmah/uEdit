@@ -34,12 +34,26 @@ void clear_screen()
     write(STDOUT_FILENO,"\x1b[H",3);
 }
 
-void draw_rows(int no_of_rows)
+void draw_rows(int no_of_rows,int no_of_cols)
 {
     int index;
     for(index = 0;index<no_of_rows;index++)
     {
-        write(STDOUT_FILENO,"~",1);
+        if (index == no_of_rows / 2)
+        {
+            char welcome_message[] = "editor --version 1";
+            int welcome_message_length = strlen(welcome_message);
+            if (welcome_message_length > no_of_cols) welcome_message_length = no_of_cols;
+            int padding = (no_of_cols - welcome_message_length) / 2;
+            if(padding)
+            {
+                write(STDOUT_FILENO,"~",1);
+                padding--;
+            }
+            while(padding--) write(STDOUT_FILENO," ",1);
+            write(STDOUT_FILENO, welcome_message, welcome_message_length);
+        } 
+        else write(STDOUT_FILENO,"~",1);
         if(index < no_of_rows - 1) write(STDOUT_FILENO,"\r\n",2);
     }
     write(STDOUT_FILENO,"\x1b[H",3);
