@@ -26,6 +26,14 @@ struct editor_config
 
 struct editor_config editor;
 
+// special keys
+enum editor_special_keys {
+  ARROW_LEFT = 1000,
+  ARROW_RIGHT,
+  ARROW_UP,
+  ARROW_DOWN
+};
+
 // initial editor config
 void init_editor_config()
 {
@@ -35,7 +43,7 @@ void init_editor_config()
 }
 
 //gets the key that's pressed
-char get_pressed_key()
+int get_pressed_key()
 {
   int no_of_byte_read;
   char c;
@@ -45,24 +53,39 @@ char get_pressed_key()
       disable_raw_mode(&original_terminal_config);
       emergency_exit("read");
     }
-  return c;
+  // check for UP ARROW, DOWN ARROW, LEFT and RIGHT ARROW
+  if (c == '\x1b') {
+    char seq[3];
+    if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\x1b';
+    if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
+    if (seq[0] == '[') {
+      switch (seq[1]) {
+        case 'A': return ARROW_UP;
+        case 'B': return ARROW_DOWN;
+        case 'C': return ARROW_RIGHT;
+        case 'D': return ARROW_LEFT;
+      }
+    }
+    return '\x1b';
+  } 
+  else return c;
 }
 
 //move cursor
-void move_cursor(char pressed_key)
+void move_cursor(int pressed_key)
 {
   switch(pressed_key)
   {
-     case 'a':
+     case ARROW_LEFT:
       editor.cursor_x--;
       break;
-    case 'd':
+    case ARROW_RIGHT:
       editor.cursor_x++;
       break;
-    case 'w':
+    case ARROW_UP:
       editor.cursor_y--;
       break;
-    case 's':
+    case ARROW_DOWN:
       editor.cursor_y++;
       break;
   }
@@ -70,7 +93,7 @@ void move_cursor(char pressed_key)
 
 //process key
 void detect_keypress() {
-  char c = get_pressed_key();
+  int c = get_pressed_key();
   switch (c) {
     //qutting editor
     case CTRL_KEY('q'):
@@ -80,10 +103,10 @@ void detect_keypress() {
       break;
 
     //cursor movement
-    case 'w':
-    case 's':
-    case 'a':
-    case 'd':
+    case ARROW_UP:
+    case ARROW_DOWN:
+    case ARROW_LEFT:
+    case ARROW_RIGHT:
       move_cursor(c);
       break;
   }

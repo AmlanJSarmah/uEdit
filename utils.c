@@ -27,7 +27,7 @@ void clear_screen()
     //The first byte is \x1b, which is the escape character, or 27 in decimal.
     //other three bytes are [2j . It clears screen
     write(STDOUT_FILENO, "\x1b[2J", 4);
-    // we are using 3 in write as we are writing 4 bytes in the terminal
+    // we are using 3 in write as we are writing 3 bytes in the terminal
     //The first byte is \x1b, which is the escape character, or 27 in decimal.
     //other two bytes are [H. It reposition cursor
     write(STDOUT_FILENO,"\x1b[H",3);
@@ -55,7 +55,7 @@ void draw_rows(int no_of_rows,int no_of_cols)
         else write(STDOUT_FILENO,"~",1);
         if(index < no_of_rows - 1) write(STDOUT_FILENO,"\r\n",2);
     }
-    write(STDOUT_FILENO,"\x1b[H",3);
+    write(STDOUT_FILENO,"\x1b[H",3); //reposition the cursor to the top
 }
 
 int get_window_size(int *no_of_rows, int *no_of_columns)
