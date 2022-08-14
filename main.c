@@ -77,16 +77,20 @@ void move_cursor(int pressed_key)
   switch(pressed_key)
   {
      case ARROW_LEFT:
-      editor.cursor_x--;
+      if(editor.cursor_x != 0)
+        editor.cursor_x--;
       break;
     case ARROW_RIGHT:
-      editor.cursor_x++;
+      if(editor.cursor_x != editor.no_of_columns - 1)
+        editor.cursor_x++;
       break;
     case ARROW_UP:
-      editor.cursor_y--;
+      if(editor.cursor_y != 0)
+        editor.cursor_y--;
       break;
     case ARROW_DOWN:
-      editor.cursor_y++;
+      if(editor.cursor_y != editor.no_of_rows - 1)
+        editor.cursor_y++;
       break;
   }
 }
