@@ -42,7 +42,7 @@ void draw_rows(int no_of_rows,int no_of_cols,int no_of_text_rows,int text_size,c
         {
             if (no_of_text_rows == 0 && index == no_of_rows / 2)
             {
-                char welcome_message[] = "editor --version 1";
+                char welcome_message[] = "Editor --Version 1";
                 int welcome_message_length = strlen(welcome_message);
                 if (welcome_message_length > no_of_cols) welcome_message_length = no_of_cols;
                 int padding = (no_of_cols - welcome_message_length) / 2;
