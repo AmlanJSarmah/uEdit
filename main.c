@@ -7,10 +7,27 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/ioctl.h>
+#include <sys/types.h>
 #include <string.h>
+
+// row defination
+typedef struct editor_row
+{
+  int size;
+  char *data;
+} editor_row;
 
 // macro definations
 #define CTRL_KEY(k) ((k) & 0x1f)
+#ifndef _DEFAULT_SOURCE
+  #define _DEFAULT_SOURCE
+#endif
+#ifndef _BSD_SOURCE
+  #define _BSD_SOURCE
+#endif
+#ifndef _GNU_SOURCE
+  #define _GNU_SOURCE
+#endif  
 
 //original terminal configuation
 struct termios original_terminal_config;
@@ -22,6 +39,8 @@ struct editor_config
   int cursor_y;
   int no_of_rows;
   int no_of_columns;
+  int no_of_text_rows;
+  editor_row row;
 };
 
 struct editor_config editor;
@@ -44,7 +63,30 @@ void init_editor_config()
 {
   editor.cursor_x = 0;
   editor.cursor_y = 0;
+  editor.no_of_text_rows = 0;
   if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
+}
+
+// opens our editor
+void open_editor(char *filename) 
+{
+  FILE *fp = fopen(filename, "r");
+  if (!fp) emergency_exit("fopen");
+  char *line = NULL;
+  size_t linecap = 0;
+  ssize_t linelen;
+  linelen = getline(&line, &linecap, fp);
+  if (linelen != -1) {
+    while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
+      linelen--;
+    editor.row.size = linelen;
+    editor.row.data = malloc(linelen + 1);
+    memcpy(editor.row.data, line, linelen);
+    editor.row.data[linelen] = '\0';
+    editor.no_of_text_rows = 1;
+  }
+  free(line);
+  fclose(fp);
 }
 
 //gets the key that's pressed
@@ -167,16 +209,18 @@ void detect_keypress() {
   }
 }
 
-int main()
+int main(int argc,char *argv[])
 {
   enable_raw_mode(&original_terminal_config); //comes from terminal.h it enables the raw mode in terminal
   init_editor_config(); //initialize editor config
+  if(argc >= 2)
+    open_editor(argv[1]);
   //the loop always keeps on running looking for input 
   for(;;)
   {
     write(STDOUT_FILENO,"\x1b[?25l",6); //clears cursor before repaint
     clear_screen();
-    draw_rows(editor.no_of_rows,editor.no_of_columns);
+    draw_rows(editor.no_of_rows,editor.no_of_columns,editor.no_of_text_rows,editor.row.size,editor.row.data);
 
     //mouse pointer buffer
     char buf[32];
