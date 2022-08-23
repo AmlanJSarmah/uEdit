@@ -42,13 +42,13 @@ enum editor_special_keys {
 };
 
 //add a new row to editor
-void editor_append_row(char *s, size_t len) {
+void editor_append_row(char *line, size_t length) {
     editor.row = realloc(editor.row, sizeof(editor_row) * (editor.no_of_text_rows + 1));
-    int at = editor.no_of_text_rows;
-    editor.row[at].size = len;
-    editor.row[at].data = malloc(len + 1);
-    memcpy(editor.row[at].data, s, len);
-    editor.row[at].data[len] = '\0';
+    int index = editor.no_of_text_rows;
+    editor.row[index].size = length;
+    editor.row[index].data = malloc(length + 1);
+    memcpy(editor.row[index].data, line, length);
+    editor.row[index].data[length] = '\0';
     editor.no_of_text_rows++;
 }
 
@@ -68,13 +68,13 @@ void open_editor(char *filename)
   FILE *fp = fopen(filename, "r");
   if (!fp) emergency_exit("fopen");
   char *line = NULL;
-  size_t linecap = 0;
-  ssize_t linelen;
-  while ((linelen = getline(&line, &linecap, fp)) != -1) 
+  size_t line_capacity = 0;
+  ssize_t line_length;
+  while ((line_length = getline(&line, &line_capacity, fp)) != -1) 
   {
-    while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
-       linelen--;
-    editor_append_row(line,linelen);
+    while (line_length > 0 && (line[line_length - 1] == '\n' || line[line_length - 1] == '\r'))
+       line_length--;
+    editor_append_row(line,line_length);
   }
   free(line);
   fclose(fp);
