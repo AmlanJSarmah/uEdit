@@ -4,6 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <data.h>
 
 // Note on Escape sequence character:
 // It always begin with \x1b which is equivalent to 27. It instruct the terminal to do various text formatting tasks, such as coloring text, moving the cursor around, and clearing parts of the screen.
@@ -33,19 +34,20 @@ void clear_screen()
     write(STDOUT_FILENO,"\x1b[H",3);
 }
 
-void draw_rows(int no_of_rows,int no_of_cols,int no_of_text_rows,int text_size,char *data)
+void draw_rows(struct editor_config *editor)
 {
     int index;
-    for(index = 0;index<no_of_rows;index++)
+    struct editor_config editor_new = *editor;
+    for(index = 0;index < editor_new.no_of_rows;index++)
     {
-        if(index >= no_of_text_rows)
+        if(index >= editor_new.no_of_text_rows)
         {
-            if (no_of_text_rows == 0 && index == no_of_rows / 2)
+            if (editor_new.no_of_text_rows == 0 && index == editor_new.no_of_rows / 2)
             {
                 char welcome_message[] = "Editor --Version 1";
                 int welcome_message_length = strlen(welcome_message);
-                if (welcome_message_length > no_of_cols) welcome_message_length = no_of_cols;
-                int padding = (no_of_cols - welcome_message_length) / 2;
+                if (welcome_message_length > editor_new.no_of_columns) welcome_message_length = editor_new.no_of_columns;
+                int padding = (editor_new.no_of_columns - welcome_message_length) / 2;
                 if(padding)
                 {
                     write(STDOUT_FILENO,"\r~",2);
@@ -55,16 +57,18 @@ void draw_rows(int no_of_rows,int no_of_cols,int no_of_text_rows,int text_size,c
                 write(STDOUT_FILENO, welcome_message, welcome_message_length);
             } 
             else write(STDOUT_FILENO,"\r~",2);
-            if(index < no_of_rows - 1) write(STDOUT_FILENO,"\r\n",2);
+            if(index < editor_new.no_of_rows - 1) write(STDOUT_FILENO,"\r\n",2);
         }
         else
         {
-            int len = text_size;
-            if (len > no_of_cols) len = no_of_cols;
-            write(STDOUT_FILENO, data, len);
+            int len = editor_new.row[index].size;
+            if (len > editor_new.no_of_columns) len = editor_new.no_of_columns;
+            write(STDOUT_FILENO, editor_new.row[index].data, len);
+            write(STDOUT_FILENO,"\n\r",2);
         }
     }
     write(STDOUT_FILENO,"\x1b[H",3); //reposition the cursor to the top
+    *editor = editor_new;
 }
 
 int get_window_size(int *no_of_rows, int *no_of_columns)

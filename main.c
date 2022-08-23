@@ -25,6 +25,7 @@
 
 //original terminal configuation
 struct termios original_terminal_config;
+//editor configuraton
 struct editor_config editor;
 
 // special keys
@@ -40,12 +41,24 @@ enum editor_special_keys {
   PAGE_DOWN
 };
 
+//add a new row to editor
+void editor_append_row(char *s, size_t len) {
+    editor.row = realloc(editor.row, sizeof(editor_row) * (editor.no_of_text_rows + 1));
+    int at = editor.no_of_text_rows;
+    editor.row[at].size = len;
+    editor.row[at].data = malloc(len + 1);
+    memcpy(editor.row[at].data, s, len);
+    editor.row[at].data[len] = '\0';
+    editor.no_of_text_rows++;
+}
+
 // initial editor config
 void init_editor_config()
 {
   editor.cursor_x = 0;
   editor.cursor_y = 0;
   editor.no_of_text_rows = 0;
+  editor.row = NULL;
   if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
 }
 
@@ -57,15 +70,11 @@ void open_editor(char *filename)
   char *line = NULL;
   size_t linecap = 0;
   ssize_t linelen;
-  linelen = getline(&line, &linecap, fp);
-  if (linelen != -1) {
+  while ((linelen = getline(&line, &linecap, fp)) != -1) 
+  {
     while (linelen > 0 && (line[linelen - 1] == '\n' || line[linelen - 1] == '\r'))
-      linelen--;
-    editor.row.size = linelen;
-    editor.row.data = malloc(linelen + 1);
-    memcpy(editor.row.data, line, linelen);
-    editor.row.data[linelen] = '\0';
-    editor.no_of_text_rows = 1;
+       linelen--;
+    editor_append_row(line,linelen);
   }
   free(line);
   fclose(fp);
@@ -202,7 +211,7 @@ int main(int argc,char *argv[])
   {
     write(STDOUT_FILENO,"\x1b[?25l",6); //clears cursor before repaint
     clear_screen();
-    draw_rows(editor.no_of_rows,editor.no_of_columns,editor.no_of_text_rows,editor.row.size,editor.row.data);
+    draw_rows(&editor);
 
     //mouse pointer buffer
     char buf[32];

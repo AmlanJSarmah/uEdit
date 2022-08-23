@@ -16,7 +16,7 @@ struct editor_config
   int no_of_rows;
   int no_of_columns;
   int no_of_text_rows;
-  editor_row row;
+  editor_row *row;
 };
 
 #endif
