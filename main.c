@@ -9,13 +9,7 @@
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <string.h>
-
-// row defination
-typedef struct editor_row
-{
-  int size;
-  char *data;
-} editor_row;
+#include <data.h>
 
 // macro definations
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -31,18 +25,6 @@ typedef struct editor_row
 
 //original terminal configuation
 struct termios original_terminal_config;
-
-//editor configurations
-struct editor_config
-{
-  int cursor_x;
-  int cursor_y;
-  int no_of_rows;
-  int no_of_columns;
-  int no_of_text_rows;
-  editor_row row;
-};
-
 struct editor_config editor;
 
 // special keys
