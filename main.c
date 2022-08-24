@@ -41,6 +41,16 @@ enum editor_special_keys {
   PAGE_DOWN
 };
 
+// initial editor config
+void init_editor_config()
+{
+  editor.cursor_x = 0;
+  editor.cursor_y = 0;
+  editor.no_of_text_rows = 0;
+  editor.row = NULL;
+  if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
+}
+
 //add a new row to editor
 void editor_append_row(char *line, size_t length) {
     editor.row = realloc(editor.row, sizeof(editor_row) * (editor.no_of_text_rows + 1));
@@ -50,16 +60,6 @@ void editor_append_row(char *line, size_t length) {
     memcpy(editor.row[index].data, line, length);
     editor.row[index].data[length] = '\0';
     editor.no_of_text_rows++;
-}
-
-// initial editor config
-void init_editor_config()
-{
-  editor.cursor_x = 0;
-  editor.cursor_y = 0;
-  editor.no_of_text_rows = 0;
-  editor.row = NULL;
-  if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
 }
 
 // opens our editor
