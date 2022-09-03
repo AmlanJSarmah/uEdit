@@ -28,6 +28,7 @@ void clear_screen()
     //The first byte is \x1b, which is the escape character, or 27 in decimal.
     //other three bytes are [2j . It clears screen
     write(STDOUT_FILENO, "\x1b[2J", 4);
+    printf("\033c"); //alternative way used to clear the entire screen
     // we are using 3 in write as we are writing 3 bytes in the terminal
     //The first byte is \x1b, which is the escape character, or 27 in decimal.
     //other two bytes are [H. It reposition cursor

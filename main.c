@@ -171,6 +171,7 @@ void detect_keypress() {
     case CTRL_KEY('q'):
       disable_raw_mode(&original_terminal_config);
       clear_screen();
+      printf("\033c"); //used to clear the entire screen
       exit(0);
       break;
 
