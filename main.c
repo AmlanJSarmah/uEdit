@@ -48,6 +48,7 @@ void init_editor_config()
   editor.cursor_y = 0;
   editor.no_of_text_rows = 0;
   editor.row = NULL;
+  editor.row_offset = 0;
   if (get_window_size(&editor.no_of_rows, &editor.no_of_columns) == -1) emergency_exit("getWindowSize");
 }
 

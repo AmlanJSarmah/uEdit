@@ -41,7 +41,8 @@ void draw_rows(struct editor_config *editor)
     struct editor_config editor_new = *editor;
     for(index = 0;index < editor_new.no_of_rows;index++)
     {
-        if(index >= editor_new.no_of_text_rows)
+      int file_row = index + editor_new.row_offset;
+        if(file_row >= editor_new.no_of_text_rows)
         {
             if (editor_new.no_of_text_rows == 0 && index == editor_new.no_of_rows / 2)
             {
@@ -62,9 +63,9 @@ void draw_rows(struct editor_config *editor)
         }
         else
         {
-            int len = editor_new.row[index].size;
+            int len = editor_new.row[file_row].size;
             if (len > editor_new.no_of_columns) len = editor_new.no_of_columns;
-            write(STDOUT_FILENO, editor_new.row[index].data, len);
+            write(STDOUT_FILENO, editor_new.row[file_row].data, len);
             write(STDOUT_FILENO,"\n\r",2);
         }
     }
@@ -82,4 +83,9 @@ int get_window_size(int *no_of_rows, int *no_of_columns)
         *no_of_rows = window_size.ws_row;
         return 0;
     } 
+}
+
+void editor_scroll(struct editor_config *editor)
+{
+  if(*editor.cursor_y < *editor.row_offset) *editor.row_offset = *editor.cursor_y;
 }
