@@ -87,5 +87,5 @@ int get_window_size(int *no_of_rows, int *no_of_columns)
 
 void editor_scroll(struct editor_config *editor)
 {
-  if(*editor.cursor_y < *editor.row_offset) *editor.row_offset = *editor.cursor_y;
+  //if(*editor.cursor_y < *editor.row_offset) *editor.row_offset = *editor.cursor_y;
 }

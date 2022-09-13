@@ -167,6 +167,7 @@ void move_cursor(int pressed_key)
 //process key
 void detect_keypress() {
   int c = get_pressed_key();
+  int no_of_iterations = editor.no_of_rows;
   switch (c) {
     //qutting editor
     case CTRL_KEY('q'):
@@ -187,7 +188,6 @@ void detect_keypress() {
     //page up and page down
     case PAGE_UP:
     case PAGE_DOWN:
-      int no_of_iterations = editor.no_of_rows;
       while(no_of_iterations--)
         move_cursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
       break;
