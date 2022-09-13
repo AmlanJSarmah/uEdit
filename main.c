@@ -158,7 +158,7 @@ void move_cursor(int pressed_key)
         editor.cursor_y--;
       break;
     case ARROW_DOWN:
-      if(editor.cursor_y != editor.no_of_rows - 1)
+      if(editor.cursor_y < editor.no_of_rows)
         editor.cursor_y++;
       break;
   }
@@ -211,6 +211,7 @@ int main(int argc,char *argv[])
   //the loop always keeps on running looking for input 
   for(;;)
   {
+    editor_scroll(&editor);
     write(STDOUT_FILENO,"\x1b[?25l",6); //clears cursor before repaint
     clear_screen();
     draw_rows(&editor);
