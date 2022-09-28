@@ -158,7 +158,7 @@ void move_cursor(int pressed_key)
         editor.cursor_y--;
       break;
     case ARROW_DOWN:
-      if(editor.cursor_y < editor.no_of_rows)
+      if(editor.cursor_y < editor.no_of_text_rows)
         editor.cursor_y++;
       break;
   }
@@ -218,7 +218,7 @@ int main(int argc,char *argv[])
 
     //mouse pointer buffer
     char buf[32];
-    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", editor.cursor_y + 1, editor.cursor_x + 1);
+    snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (editor.cursor_y - editor.row_offset) + 1, editor.cursor_x + 1);
     write(STDOUT_FILENO,buf,strlen(buf));
     
     write(STDOUT_FILENO,"\x1b[?25h",6); //display the cursor
