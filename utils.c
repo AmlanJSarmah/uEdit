@@ -26,7 +26,8 @@ void clear_screen()
 {
     // we are using 4 in write as we are writing 4 bytes in the terminal
     //The first byte is \x1b, which is the escape character, or 27 in decimal.
-    write(STDIN_FILENO,"\x1b[2J",5);
+    //write(STDIN_FILENO,"\x1b[2J",5);
+    // We wil be using a alternative way 
     write(STDIN_FILENO,"\033c",3);
     // we are using 3 in write as we are writing 3 bytes in the terminal
     //The first byte is \x1b, which is the escape character, or 27 in decimal.
