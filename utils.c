@@ -1,10 +1,10 @@
-#include <utils.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <data.h>
+#include "data.h"
+#include "utils.h"
 
 // Note on Escape sequence character:
 // It always begin with \x1b which is equivalent to 27. It instruct the terminal to do various text formatting tasks, such as coloring text, moving the cursor around, and clearing parts of the screen.
@@ -89,4 +89,17 @@ void editor_scroll(struct editor_config *editor)
 {
   if(editor->cursor_y < editor->row_offset) editor->row_offset = editor->cursor_y;
   if (editor->cursor_y >= editor->row_offset + editor->no_of_rows) editor->row_offset = editor->cursor_y - editor->no_of_rows + 1;
+}
+
+void write_to_buffer(struct write_buffer *wb,char* string,int size)
+{
+  char *new = realloc(wb->string, wb->size + size);
+  if (new == NULL) return;
+  memcpy(&new[wb->size], string, size);
+  wb->string = new;
+  wb->size += size;
+}
+
+void write_buffer_free(struct write_buffer *wb) {
+  free(wb->string);
 }

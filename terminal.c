@@ -2,8 +2,8 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <terminal.h>
-#include <utils.h>
+#include "terminal.h"
+#include "utils.h"
 
 
 // Editing a BITFLAG with BITWISE NOT(~) and AND(&). Let us consider a bitflag:

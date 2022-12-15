@@ -20,4 +20,10 @@ struct editor_config
   editor_row *row;
 };
 
+struct write_buffer
+{
+  char* string; 
+  int size; 
+};
+
 #endif

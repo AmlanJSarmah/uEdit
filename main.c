@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <termios.h>
-#include <terminal.h>
-#include <utils.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <string.h>
-#include <data.h>
+#include <termios.h>
+#include "data.h"
+#include "utils.h"
+#include "terminal.h"
 
 // macro definations
 #define CTRL_KEY(k) ((k) & 0x1f)
@@ -27,6 +27,7 @@
 struct termios original_terminal_config;
 //editor configuraton
 struct editor_config editor;
+ 
 
 // special keys
 enum editor_special_keys {
@@ -210,6 +211,9 @@ int main(int argc,char *argv[])
   //the loop always keeps on running looking for input 
   for(;;)
   {
+    //the write buffer
+    struct write_buffer editor_write = {NULL,0};
+ 
     editor_scroll(&editor);
     write(STDOUT_FILENO,"\x1b[?25l",6); //clears cursor before repaint
     clear_screen();
@@ -222,6 +226,8 @@ int main(int argc,char *argv[])
     
     write(STDOUT_FILENO,"\x1b[?25h",6); //display the cursor
     detect_keypress();
+
+    write(STDOUT_FILENO,editor_write.string,editor_write.size);
   }
   return 0;
 }
