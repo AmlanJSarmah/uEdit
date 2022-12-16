@@ -35,7 +35,7 @@ void clear_screen()
     write(STDOUT_FILENO,"\x1b[H",3);
 }
 
-void draw_rows(struct editor_config *editor)
+void draw_rows(struct editor_config *editor,struct write_buffer *wb)
 {
     int index;
     struct editor_config editor_new = *editor;
@@ -52,24 +52,24 @@ void draw_rows(struct editor_config *editor)
                 int padding = (editor_new.no_of_columns - welcome_message_length) / 2;
                 if(padding)
                 {
-                    write(STDOUT_FILENO,"\r~",2);
+                    write_to_buffer(wb,"\r~",2);
                     padding--;
                 }
-                while(padding--) write(STDOUT_FILENO," ",1);
-                write(STDOUT_FILENO, welcome_message, welcome_message_length);
+                while(padding--) write_to_buffer(wb," ",1);
+                write_to_buffer(wb, welcome_message, welcome_message_length);
             } 
-            else write(STDOUT_FILENO,"\r~",2);
-            if(index < editor_new.no_of_rows - 1) write(STDOUT_FILENO,"\r\n",2);
+            else write_to_buffer(wb,"\r~",2);
+            if(index < editor_new.no_of_rows - 1) write_to_buffer(wb,"\r\n",2);
         }
         else
         {
             int len = editor_new.row[file_row].size;
             if (len > editor_new.no_of_columns) len = editor_new.no_of_columns;
-            write(STDOUT_FILENO, editor_new.row[file_row].data, len);
-            write(STDOUT_FILENO,"\n\r",2);
+            write_to_buffer(wb, editor_new.row[file_row].data, len);
+            write_to_buffer(wb,"\n\r",2);
         }
     }
-    write(STDOUT_FILENO,"\x1b[H",3); //reposition the cursor to the top
+    write_to_buffer(wb,"\x1b[H",3); //reposition the cursor to the top
     *editor = editor_new;
 }
 
@@ -93,10 +93,10 @@ void editor_scroll(struct editor_config *editor)
 
 void write_to_buffer(struct write_buffer *wb,char* string,int size)
 {
-  char *new = realloc(wb->string, wb->size + size);
-  if (new == NULL) return;
-  memcpy(&new[wb->size], string, size);
-  wb->string = new;
+  char *updated_buffer = realloc(wb->string, wb->size + size);
+  if (updated_buffer == NULL) return;
+  memcpy(&updated_buffer[wb->size], string, size);
+  wb->string = updated_buffer;
   wb->size += size;
 }
 

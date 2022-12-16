@@ -211,23 +211,24 @@ int main(int argc,char *argv[])
   //the loop always keeps on running looking for input 
   for(;;)
   {
+    editor_scroll(&editor);
+
     //the write buffer
     struct write_buffer editor_write = {NULL,0};
  
-    editor_scroll(&editor);
-    write(STDOUT_FILENO,"\x1b[?25l",6); //clears cursor before repaint
-    clear_screen();
-    draw_rows(&editor);
+    write_to_buffer(&editor_write,"\033c",3);
+    draw_rows(&editor,&editor_write);
 
     //mouse pointer buffer
     char buf[32];
     snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (editor.cursor_y - editor.row_offset) + 1, editor.cursor_x + 1);
-    write(STDOUT_FILENO,buf,strlen(buf));
+    write_to_buffer(&editor_write,buf,strlen(buf));
     
-    write(STDOUT_FILENO,"\x1b[?25h",6); //display the cursor
+    write_to_buffer(&editor_write,"\x1b[?25h",6); //display the cursor
     detect_keypress();
 
     write(STDOUT_FILENO,editor_write.string,editor_write.size);
+    write_buffer_free(&editor_write);
   }
   return 0;
 }
